@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>选择科目</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 头部导航 */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            color: white;
+            position: relative;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: white;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .back-icon {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .grade-info {
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* 科目选择区域 */
+        .subjects-section {
+            flex: 1;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .subjects-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .subjects-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .subject-item {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .subject-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .subject-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .subject-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subject-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* 底部提示 */
+        .footer-tip {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .tip-text {
+            color: white;
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px;
+            }
+
+            .header-title {
+                font-size: 18px;
+            }
+
+            .grade-info {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+
+            .subjects-section {
+                padding: 30px 15px;
+            }
+
+            .subjects-title {
+                font-size: 20px;
+                margin-bottom: 30px;
+            }
+
+            .subjects-grid {
+                max-width: 350px;
+            }
+
+            .subject-item {
+                padding: 25px 15px;
+            }
+
+            .subject-icon {
+                font-size: 40px;
+            }
+
+            .subject-name {
+                font-size: 20px;
+            }
+
+            .subject-description {
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px;
+            }
+
+            .header-title {
+                font-size: 16px;
+            }
+
+            .grade-info {
+                font-size: 12px;
+                padding: 4px 8px;
+            }
+
+            .subjects-section {
+                padding: 20px 12px;
+            }
+
+            .subjects-title {
+                font-size: 18px;
+                margin-bottom: 25px;
+            }
+
+            .subjects-grid {
+                max-width: 300px;
+                gap: 15px;
+            }
+
+            .subject-item {
+                padding: 20px 12px;
+            }
+
+            .subject-icon {
+                font-size: 36px;
+                margin-bottom: 12px;
+            }
+
+            .subject-name {
+                font-size: 18px;
+                margin-bottom: 8px;
+            }
+
+            .subject-description {
+                font-size: 12px;
+            }
+
+            .tip-text {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部导航 -->
+        <div class="header">
+            <a href="demo.html" class="back-btn">
+                <span class="back-icon">←</span>
+            </a>
+            <div class="header-title">选择科目</div>
+            <div class="grade-info" id="gradeInfo">年级</div>
+        </div>
+
+        <!-- 科目选择区域 -->
+        <div class="subjects-section">
+            <div class="subjects-title">请选择学习科目</div>
+            <div class="subjects-grid">
+                <a href="pdf-demo.html?subject=语文" class="subject-item">
+                    <div class="subject-icon">📚</div>
+                    <div class="subject-name">语文</div>
+                    <div class="subject-description">阅读理解、作文写作、古诗词</div>
+                </a>
+                <a href="pdf-demo.html?subject=数学" class="subject-item">
+                    <div class="subject-icon">🔢</div>
+                    <div class="subject-name">数学</div>
+                    <div class="subject-description">计算、几何、应用题</div>
+                </a>
+                <a href="pdf-demo.html?subject=英语" class="subject-item">
+                    <div class="subject-icon">🌍</div>
+                    <div class="subject-name">英语</div>
+                    <div class="subject-description">单词、语法、口语练习</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- 底部提示 -->
+        <div class="footer-tip">
+            <span class="tip-text">选择科目后即可开始学习</span>
+        </div>
+    </div>
+
+    <script>
+        // 获取URL参数
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // 显示年级信息
+        const grade = getUrlParameter('grade');
+        if (grade) {
+            document.getElementById('gradeInfo').textContent = grade + '年级';
+            
+            // 更新PDF链接，添加年级参数
+            const subjectLinks = document.querySelectorAll('.subject-item');
+            subjectLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                link.setAttribute('href', href + '&grade=' + grade);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+{
+  "name": "junyiacademy-uniapp",
+  "version": "1.0.0",
+  "description": "模仿均一教育平台的uniapp项目",
+  "main": "main.js",
+  "scripts": {
+    "serve": "npm run dev:h5",
+    "build": "npm run build:h5",
+    "build:app-plus": "uni build -p app-plus",
+    "build:custom": "uni build -p",
+    "build:h5": "uni build -p h5",
+    "build:mp-alipay": "uni build -p mp-alipay",
+    "build:mp-baidu": "uni build -p mp-baidu",
+    "build:mp-weixin": "uni build -p mp-weixin",
+    "build:mp-toutiao": "uni build -p mp-toutiao",
+    "build:mp-qq": "uni build -p mp-qq",
+    "build:quickapp-native": "uni build -p quickapp-native",
+    "build:quickapp-webview": "uni build -p quickapp-webview",
+    "dev:app-plus": "uni -p app-plus",
+    "dev:custom": "uni -p",
+    "dev:h5": "uni -p h5",
+    "dev:mp-alipay": "uni -p mp-alipay",
+    "dev:mp-baidu": "uni -p mp-baidu",
+    "dev:mp-weixin": "uni -p mp-weixin",
+    "dev:mp-toutiao": "uni -p mp-toutiao",
+    "dev:mp-qq": "uni -p mp-qq",
+    "dev:quickapp-native": "uni -p quickapp-native",
+    "dev:quickapp-webview": "uni -p quickapp-webview",
+    "info": "node node_modules/@dcloudio/vue-cli-plugin-uni/commands/info.js"
+  },
+  "dependencies": {
+    "vue": "^3.2.0"
+  },
+  "devDependencies": {
+    "@vue/compiler-sfc": "^3.2.0"
+  },
+  "browserslist": [
+    "Android >= 4.4",
+    "ios >= 9"
+  ],
+  "uni-app": {
+    "scripts": {}
+  }
+}

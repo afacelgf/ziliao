@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习平台 - 首页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 头部标题区域 */
+        .header-section {
+            text-align: center;
+            color: white;
+            padding: 40px 0;
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .header-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* 九宫格年级选择区域 */
+        .grade-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        .grade-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .grade-item {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .grade-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .grade-item.selected {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .grade-number {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .grade-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* 底部欢迎区域 */
+        .welcome-section {
+            text-align: center;
+            color: white;
+            padding: 40px 0;
+        }
+
+        .welcome-text {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .welcome-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .enter-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .enter-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .enter-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .header-title {
+                font-size: 28px;
+            }
+
+            .header-subtitle {
+                font-size: 16px;
+            }
+
+            .grade-grid {
+                gap: 15px;
+                max-width: 350px;
+            }
+
+            .grade-item {
+                padding: 15px;
+                min-height: 80px;
+            }
+
+            .grade-number {
+                font-size: 24px;
+            }
+
+            .welcome-text {
+                font-size: 20px;
+            }
+
+            .enter-btn {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-section {
+                padding: 30px 0;
+            }
+
+            .header-title {
+                font-size: 24px;
+            }
+
+            .header-subtitle {
+                font-size: 14px;
+            }
+
+            .grade-grid {
+                gap: 12px;
+                max-width: 300px;
+            }
+
+            .grade-item {
+                padding: 12px;
+                min-height: 70px;
+            }
+
+            .grade-number {
+                font-size: 20px;
+            }
+
+            .grade-label {
+                font-size: 12px;
+            }
+
+            .welcome-section {
+                padding: 30px 0;
+            }
+
+            .welcome-text {
+                font-size: 18px;
+            }
+
+            .welcome-subtitle {
+                font-size: 14px;
+            }
+
+            .enter-btn {
+                padding: 10px 25px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部标题区域 -->
+        <div class="header-section">
+            <div class="header-title">学习平台</div>
+            <div class="header-subtitle">选择你的年级开始学习</div>
+        </div>
+
+        <!-- 九宫格年级选择区域 -->
+        <div class="grade-section">
+            <div class="grade-grid">
+                <div class="grade-item" onclick="selectGrade(1)">
+                    <div class="grade-number">1</div>
+                    <div class="grade-label">一年级</div>
+                </div>
+                <div class="grade-item" onclick="selectGrade(2)">
+                    <div class="grade-number">2</div>
+                    <div class="grade-label">二年级</div>
+                </div>
+                <div class="grade-item" onclick="selectGrade(3)">
+                    <div class="grade-number">3</div>
+                    <div class="grade-label">三年级</div>
+                </div>
+                <div class="grade-item" onclick="selectGrade(4)">
+                    <div class="grade-number">4</div>
+                    <div class="grade-label">四年级</div>
+                </div>
+                <div class="grade-item" onclick="selectGrade(5)">
+                    <div class="grade-number">5</div>
+                    <div class="grade-label">五年级</div>
+                </div>
+                <div class="grade-item" onclick="selectGrade(6)">
+                    <div class="grade-number">6</div>
+                    <div class="grade-label">六年级</div>
+                </div>
+                <div class="grade-item" onclick="selectGrade(7)">
+                    <div class="grade-number">7</div>
+                    <div class="grade-label">七年级</div>
+                </div>
+                <div class="grade-item" onclick="selectGrade(8)">
+                    <div class="grade-number">8</div>
+                    <div class="grade-label">八年级</div>
+                </div>
+                <div class="grade-item" onclick="selectGrade(9)">
+                    <div class="grade-number">9</div>
+                    <div class="grade-label">九年级</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部欢迎区域 -->
+        <div class="welcome-section">
+            <div class="welcome-text">欢迎来到</div>
+            <div class="welcome-subtitle">个性化学习平台</div>
+            <button class="enter-btn" id="enterBtn" onclick="enterSubjects()" disabled>进入学习</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedGrade = null;
+
+        function selectGrade(grade) {
+            // 移除之前选中的状态
+            document.querySelectorAll('.grade-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // 添加选中状态
+            event.target.closest('.grade-item').classList.add('selected');
+            selectedGrade = grade;
+            
+            // 启用进入按钮
+            document.getElementById('enterBtn').disabled = false;
+        }
+
+        function enterSubjects() {
+            if (selectedGrade) {
+                // 跳转到科目选择页面
+                window.location.href = `subjects-demo.html?grade=${selectedGrade}`;
+            } else {
+                alert('请先选择年级');
+            }
+        }
+    </script>
+</body>
+</html>
