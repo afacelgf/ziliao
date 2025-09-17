@@ -1,31 +1,31 @@
 <template>
-	<view class="container">
+	<div class="container">
 		<!-- 头部标题区域 -->
-		<view class="header-section">
-			<view class="header-title">均一教育平台</view>
-			<view class="header-subtitle">选择您的年级开始学习</view>
-		</view>
+		<div class="header-section">
+			<div class="header-title">均一教育平台</div>
+			<div class="welcome-text">欢迎来到均一教育平台</div>
+			
+		</div>
 
 		<!-- 九宫格年级选择区域 -->
-		<view class="grade-section">
-			<view class="grade-grid">
-				<view 
+		<div class="grade-section">
+			<div class="grade-grid">
+				<div 
 					class="grade-item" 
 					v-for="grade in grades" 
 					:key="grade.id"
 					:class="{ 'selected': selectedGrade === grade.id }"
 					@click="selectGrade(grade.id)"
 				>
-					<view class="grade-number">{{ grade.name }}</view>
-					<view class="grade-label">年级</view>
-				</view>
-			</view>
-		</view>
+					<div class="grade-number">{{ grade.name }}</div>
+					<div class="grade-label">年级</div>
+				</div>
+			</div>
+		</div>
 
 		<!-- 底部欢迎区域 -->
-		<view class="welcome-section">
-			<view class="welcome-text">欢迎来到均一教育平台</view>
-			<view class="welcome-subtitle">让学习变得更有趣</view>
+		<div class="welcome-section">
+			<div class="header-subtitle">选择您的年级开始学习</div>
 			<button 
 				class="enter-btn" 
 				:disabled="!selectedGrade"
@@ -33,15 +33,15 @@
 			>
 				进入学习
 			</button>
-		</view>
-	</view>
+		</div>
+	</div>
 </template>
 
 <script>
 	export default {
 		data() {
 			return {
-				title: '均一教育平台',
+				title: '666特牛资料平台',
 				selectedGrade: null,
 				grades: [
 					{ id: 1, name: '一' },
@@ -56,18 +56,13 @@
 				]
 			}
 		},
-		onLoad() {
-			
-		},
 		methods: {
 			selectGrade(gradeId) {
 				this.selectedGrade = gradeId;
 			},
 			enterSubjects() {
 				if (this.selectedGrade) {
-					uni.navigateTo({
-						url: `/pages/subjects/subjects?grade=${this.selectedGrade}`
-					});
+					this.$router.push('/subjects');
 				}
 			}
 		}

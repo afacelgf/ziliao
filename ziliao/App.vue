@@ -1,19 +1,19 @@
 <template>
-	<view id="app">
+	<div id="app">
+		<!-- <nav class="navigation">
+			<router-link to="/" class="nav-link">首页</router-link>
+			<router-link to="/subjects" class="nav-link">学科</router-link>
+			<router-link to="/pdf" class="nav-link">PDF</router-link>
+		</nav> -->
 		<router-view />
-	</view>
+	</div>
 </template>
 
 <script>
 	export default {
-		onLaunch: function() {
-			console.log('App Launch')
-		},
-		onShow: function() {
-			console.log('App Show')
-		},
-		onHide: function() {
-			console.log('App Hide')
+		name: 'App',
+		mounted() {
+			console.log('App mounted')
 		}
 	}
 </script>

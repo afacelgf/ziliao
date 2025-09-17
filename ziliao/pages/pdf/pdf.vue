@@ -209,7 +209,7 @@
 		},
 		methods: {
 			goBack() {
-				uni.navigateBack();
+				this.$router.go(-1);
 			},
 			selectCategory(categoryId) {
 				this.selectedCategory = categoryId;

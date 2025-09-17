@@ -4,11 +4,13 @@
   "description": "模仿均一教育平台的uniapp项目",
   "main": "main.js",
   "scripts": {
-    "serve": "npm run dev:h5",
-    "build": "npm run build:h5",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "vite",
+    "build:h5": "vite build",
     "build:app-plus": "uni build -p app-plus",
     "build:custom": "uni build -p",
-    "build:h5": "uni build -p h5",
     "build:mp-alipay": "uni build -p mp-alipay",
     "build:mp-baidu": "uni build -p mp-baidu",
     "build:mp-weixin": "uni build -p mp-weixin",
@@ -18,7 +20,7 @@
     "build:quickapp-webview": "uni build -p quickapp-webview",
     "dev:app-plus": "uni -p app-plus",
     "dev:custom": "uni -p",
-    "dev:h5": "uni -p h5",
+    "dev:h5": "vite",
     "dev:mp-alipay": "uni -p mp-alipay",
     "dev:mp-baidu": "uni -p mp-baidu",
     "dev:mp-weixin": "uni -p mp-weixin",
@@ -29,10 +31,13 @@
     "info": "node node_modules/@dcloudio/vue-cli-plugin-uni/commands/info.js"
   },
   "dependencies": {
-    "vue": "^3.2.0"
+    "vue": "^3.2.0",
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
-    "@vue/compiler-sfc": "^3.2.0"
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/compiler-sfc": "^3.2.0",
+    "vite": "^7.1.5"
   },
   "browserslist": [
     "Android >= 4.4",
