@@ -1,10 +1,6 @@
 <template>
 	<div id="app">
-		<!-- <nav class="navigation">
-			<router-link to="/" class="nav-link">首页</router-link>
-			<router-link to="/subjects" class="nav-link">学科</router-link>
-			<router-link to="/pdf" class="nav-link">PDF</router-link>
-		</nav> -->
+		
 		<router-view />
 	</div>
 </template>

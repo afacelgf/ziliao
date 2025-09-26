@@ -1,0 +1,33 @@
+<?php
+// +----------------------------------------------------------------------
+// | ThinkPHP [ WE CAN DO IT JUST THINK ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2006-2018 http://thinkphp.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: liu21st <liu21st@gmail.com>
+// +----------------------------------------------------------------------
+
+// [ 应用入口文件 ]
+namespace think;
+
+// 加载基础文件
+require __DIR__ . '/../thinkphp/base.php';
+//跨域
+header("Access-Control-Allow-Origin:*");
+header("Access-Control-Allow-Methods:GET, POST, OPTIONS, DELETE");
+header("Access-Control-Allow-Headers:authorization,DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type, Accept-Language, Origin, Accept-Encoding");
+
+// 支持事先使用静态方法设置Request对象和Config对象
+if (!empty($_SERVER['HTTP_ORIGIN'])) {
+    $allowed_origins = ["https://www.haojiabang520.com/"];
+    if (in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
+
+//        header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
+//        header("Access-Control-Allow-Headers: 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,token'");
+    }
+}
+// 执行应用并响应
+Container::get('app')->run()->send();
+define('RUNTIME_PATH', __DIR__ . '/runtime/');

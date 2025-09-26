@@ -2,9 +2,7 @@
 	<div class="container">
 		<!-- 头部标题区域 -->
 		<div class="header-section">
-			<div class="header-title">均一教育平台</div>
-			<div class="welcome-text">欢迎来到均一教育平台</div>
-			
+			<div class="header-title">欢迎来到誉享学资料分享平台</div>
 		</div>
 
 		<!-- 九宫格年级选择区域 -->
@@ -14,55 +12,108 @@
 					class="grade-item" 
 					v-for="grade in grades" 
 					:key="grade.id"
-					:class="{ 'selected': selectedGrade === grade.id }"
-					@click="selectGrade(grade.id)"
+					:class="{ 'selected': selectedGradeId === grade.id }"
+					@click="selectGrade(grade.id, grade.grade_name)"		
 				>
-					<div class="grade-number">{{ grade.name }}</div>
-					<div class="grade-label">年级</div>
+					<div class="grade-number">{{ grade.grade_level }}</div>
+					<div class="grade-label">{{ grade.grade_name }}</div>
 				</div>
 			</div>
 		</div>
 
 		<!-- 底部欢迎区域 -->
 		<div class="welcome-section">
-			<div class="header-subtitle">选择您的年级开始学习</div>
+			<div class="header-subtitle">请选择您的对应年级</div>
 			<button 
 				class="enter-btn" 
-				:disabled="!selectedGrade"
+				:disabled="!selectedGradeId"
 				@click="enterSubjects"
 			>
-				进入学习
+				进入资料库
 			</button>
 		</div>
 	</div>
 </template>
 
 <script>
+	import { gradeService } from '@/utils/dataService.js'
+
 	export default {
 		data() {
 			return {
-				title: '666特牛资料平台',
-				selectedGrade: null,
-				grades: [
-					{ id: 1, name: '一' },
-					{ id: 2, name: '二' },
-					{ id: 3, name: '三' },
-					{ id: 4, name: '四' },
-					{ id: 5, name: '五' },
-					{ id: 6, name: '六' },
-					{ id: 7, name: '七' },
-					{ id: 8, name: '八' },
-					{ id: 9, name: '九' }
-				]
+				selectedGradeId: null,
+				selectedGradeName: null,
+				grades: [],
+				loading: false
 			}
 		},
+		mounted() {
+			// 页面加载时获取年级列表
+			this.loadGrades()
+			// 恢复上次选中的年级
+			this.restoreSelectedGrade()
+		},
 		methods: {
-			selectGrade(gradeId) {
-				this.selectedGrade = gradeId;
+			async loadGrades() {
+				this.loading = true
+				try {
+					this.grades = await gradeService.getGradeList()
+					console.log('年级列表:', this.grades)
+				} catch (error) {
+					console.error('加载年级列表失败:', error)
+				} finally {
+					this.loading = false
+				}
+			},
+			
+			selectGrade(gradeId, gradeName) {
+				console.log('选择年级:', gradeId, gradeName)
+				this.selectedGradeId = gradeId;
+				this.selectedGradeName = gradeName;
+				// 保存选中的年级到本地存储
+				this.saveSelectedGrade(gradeId, gradeName);
+			},
+			
+			// 保存选中的年级到本地存储
+			saveSelectedGrade(gradeId, gradeName) {
+				try {
+					const gradeData = {
+						gradeId: gradeId,
+						gradeName: gradeName,
+						timestamp: Date.now()
+					};
+					localStorage.setItem('selectedGrade', JSON.stringify(gradeData));
+				} catch (error) {
+					console.error('保存年级选择失败:', error);
+				}
+			},
+			
+			// 从本地存储恢复选中的年级
+			restoreSelectedGrade() {
+				try {
+					const savedGradeStr = localStorage.getItem('selectedGrade');
+					if (savedGradeStr) {
+						const savedGrade = JSON.parse(savedGradeStr);
+						if (savedGrade && savedGrade.gradeId) {
+							this.selectedGradeId = savedGrade.gradeId;
+							this.selectedGradeName = savedGrade.gradeName;
+							console.log('恢复上次选中的年级:', savedGrade);
+						}
+					}
+				} catch (error) {
+					console.error('恢复年级选择失败:', error);
+				}
 			},
 			enterSubjects() {
-				if (this.selectedGrade) {
-					this.$router.push('/subjects');
+				if (this.selectedGradeId) {
+					// 传递选中的地区和年级参数
+					this.$router.push({
+						path: '/subjects',
+						query: { 
+							grade_id: this.selectedGradeId,
+							grade_name: this.selectedGradeName
+						}
+					});
 				}
 			}
 		}
@@ -76,6 +127,51 @@
 		display: flex;
 		flex-direction: column;
 		padding: 20px;
+	}
+
+	/* 地区选择区域 */
+	.region-section {
+		text-align: center;
+		color: white;
+		padding: 20px 0;
+	}
+
+	.section-title {
+		font-size: 20px;
+		font-weight: bold;
+		margin-bottom: 15px;
+		opacity: 0.9;
+	}
+
+	.region-tabs {
+		display: flex;
+		justify-content: center;
+		gap: 15px;
+		flex-wrap: wrap;
+	}
+
+	.region-tab {
+		background: rgba(255, 255, 255, 0.2);
+		color: white;
+		border: 2px solid rgba(255, 255, 255, 0.3);
+		border-radius: 25px;
+		padding: 10px 25px;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		font-size: 16px;
+		font-weight: 500;
+	}
+
+	.region-tab:hover {
+		background: rgba(255, 255, 255, 0.3);
+		transform: translateY(-2px);
+	}
+
+	.region-tab.active {
+		background: rgba(255, 255, 255, 0.9);
+		color: #667eea;
+		border-color: rgba(255, 255, 255, 0.9);
+		transform: scale(1.05);
 	}
 
 	/* 头部标题区域 */
@@ -94,6 +190,7 @@
 	.header-subtitle {
 		font-size: 18px;
 		opacity: 0.9;
+		margin-bottom: 10px;
 	}
 
 	/* 九宫格年级选择区域 */
@@ -209,6 +306,15 @@
 			font-size: 16px;
 		}
 
+		.section-title {
+			font-size: 18px;
+		}
+
+		.region-tab {
+			padding: 8px 20px;
+			font-size: 14px;
+		}
+
 		.grade-grid {
 			gap: 15px;
 			max-width: 350px;
@@ -244,6 +350,19 @@
 
 		.header-subtitle {
 			font-size: 14px;
+		}
+
+		.section-title {
+			font-size: 16px;
+		}
+
+		.region-tabs {
+			gap: 10px;
+		}
+
+		.region-tab {
+			padding: 6px 15px;
+			font-size: 12px;
 		}
 
 		.grade-grid {

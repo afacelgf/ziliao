@@ -1,218 +1,226 @@
 <template>
-	<view class="container">
-		<!-- 头部导航 -->
-		<view class="header">
-			<view class="back-btn" @click="goBack">
-				<text class="back-icon">←</text>
-			</view>
-			<view class="header-info">
-				<view class="header-title">{{ subjectName }}</view>
-				<view class="header-subtitle">{{ selectedGrade }}年级</view>
-			</view>
-			<view class="menu-btn" @click="showMenu = !showMenu">
-				<text class="menu-icon">⋮</text>
-			</view>
-		</view>
+	<div class="page-container">
+		<!-- 头部导航栏 -->
+		<div class="header-nav">
+			<div class="nav-left">
+				<div class="back-button" @click="goBack">
+					<span class="back-icon">←</span>
+				</div>
+			</div>
+			<div class="nav-center">
+				<div class="page-title">{{ selectedGradeName + '-' + subjectName }}</div>
+			</div>
+			<div class="nav-right">
+				<div class="menu-button" @click="showMenu = !showMenu">
+					<span class="menu-icon">⋮</span>
+				</div>
+			</div>
+		</div>
 
-		<!-- 分类选择区域 -->
-		<view class="category-section">
-			<view class="category-tabs">
-				<view 
-					class="category-tab" 
-					:class="{ active: selectedCategory === category.id }"
-					v-for="category in categories" 
-					:key="category.id"
-					@click="selectCategory(category.id)"
-				>
-					<text class="category-icon">{{ category.icon }}</text>
-					<text class="category-name">{{ category.name }}</text>
-				</view>
-			</view>
-		</view>
+		<!-- 主要内容区域 -->
+		<div class="main-content">
+			<!-- 分类筛选栏 -->
+			<div class="filter-section">
+				<div class="filter-title">资料分类</div>
+				<div class="category-scroll">
+					<div class="category-list">
+						<div 
+							class="category-item" 
+							:class="{ active: selectedCategory === category.id }"
+							v-for="category in categories" 
+							:key="category.id"
+							@click="selectCategory(category.id)"
+						>
+							<div class="category-icon-wrapper">
+								<span class="category-icon">{{ category.icon }}</span>
+							</div>
+							<span class="category-label">{{ category.name }}</span>
+						</div>
+					</div>
+				</div>
+			</div>
 
-		<!-- PDF文件列表区域 -->
-		<view class="file-list-section">
-			<view class="file-list">
-				<view 
-					class="file-item" 
-					v-for="file in currentFiles" 
-					:key="file.id"
-					@click="showDownloadDialog(file)"
-				>
-					<view class="file-icon">📄</view>
-					<view class="file-info">
-						<view class="file-name">{{ file.name }}</view>
-						<view class="file-description">{{ file.description }}</view>
-						<view class="file-size">{{ file.size }}</view>
-					</view>
-					<view class="file-arrow">›</view>
-				</view>
-			</view>
-		</view>
+			<!-- 内容展示区域 -->
+			<div class="content-section">
+				<!-- 空白状态 -->
+				<div v-if="currentFiles.length === 0 && !loading" class="empty-container">
+					<div class="empty-illustration">
+						<span class="empty-icon">📚</span>
+						<div class="empty-decoration"></div>
+					</div>
+					<div class="empty-content">
+						<div class="empty-description">该分类下暂时没有可用的学习资料<br/>请尝试选择其他分类</div>
+					</div>
+				</div>
+				
+				<!-- 加载状态 -->
+				<div v-if="loading" class="loading-container">
+					<div class="loading-spinner">
+						<div class="spinner-ring"></div>
+						<div class="spinner-ring"></div>
+						<div class="spinner-ring"></div>
+					</div>
+					<div class="loading-text">正在加载资料...</div>
+				</div>
+				
+				<!-- 文件网格列表 -->
+				<div v-if="currentFiles.length > 0" class="files-grid">
+					<div 
+						class="file-card" 
+						v-for="file in currentFiles" 
+						:key="file.id"
+						@click="showDownloadDialog(file)"
+					>
+						<div class="file-content">
+							<div class="file-type-icon">
+								<span class="file-icon">📄</span>
+							</div>
+							<div class="file-info">
+								<div class="file-title">{{ file.name }}</div>
+								<div class="file-meta">
+									<span class="file-size">{{ file.filesize }}</span>
+								</div>
+								<div class="file-description">{{ file.description }}</div>
+							</div>
+						</div>
+						<div class="file-action">
+							<div class="download-button">点击下载</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
-		<!-- 下载URL弹窗 -->
-		<view class="download-modal" v-if="showModal" @click="closeModal">
-			<view class="modal-content" @click.stop>
-				<view class="modal-header">
-					<view class="modal-title">下载链接</view>
-					<view class="modal-close" @click="closeModal">×</view>
-				</view>
-				<view class="modal-body">
-					<view class="file-info-modal">
-						<view class="file-name-modal">{{ selectedFile.name }}</view>
-						<view class="file-description-modal">{{ selectedFile.description }}</view>
-					</view>
-					<view class="url-container">
-						<view class="url-label">下载地址：</view>
-						<view class="url-text" :selectable="true">{{ selectedFile.downloadUrl }}</view>
-					</view>
-				</view>
-				<view class="modal-footer">
-					<view class="copy-btn" @click="copyUrl">
-						<text class="copy-icon">📋</text>
-						<text class="copy-text">复制链接</text>
-					</view>
-				</view>
-			</view>
-		</view>
-	</view>
+		<!-- 下载弹窗 -->
+		<div class="download-overlay" v-if="showModal" @click="closeModal">
+			<div class="download-dialog" @click.stop>
+				<div class="dialog-header">
+					<div class="dialog-icon">📥</div>
+					<div class="dialog-title">下载资料</div>
+					<div class="dialog-close" @click="closeModal">×</div>
+				</div>
+				
+				<div class="dialog-content">
+					<div class="file-preview-large">
+						<div class="file-icon-large">📄</div>
+						<div class="file-info-large">
+							<div class="file-name-large">{{ selectedFile.name }}</div>
+							<div class="file-desc-large">{{ selectedFile.description }}</div>
+						</div>
+					</div>
+					
+					<div class="download-section">
+						<div class="download-label">下载链接</div>
+						<div class="url-display">
+							<span class="url-text" :selectable="true">{{ selectedFile.download_url }}</span>
+						</div>
+					</div>
+				</div>
+				
+				<div class="dialog-actions">
+					<div class="action-button primary" @click="copyUrl">
+						<span class="button-icon">📋</span>
+						<span class="button-text">复制链接</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
+	import { materialService } from '@/utils/dataService.js'
+
 	export default {
 		data() {
 			return {
-				selectedGrade: '',
+				selectedGradeId: '',
+				selectedGradeName: '',
 				subjectName: '',
 				subjectId: '',
-				selectedCategory: 'textbook',
+				selectedCategory: null,
+				selectedTypeId: null,
 				showModal: false,
 				selectedFile: {},
-				categories: [
-				{ id: 'textbook', name: '教材', icon: '📚' },
-				{ id: 'exercise', name: '练习册', icon: '📝' },
-				{ id: 'test', name: '试卷', icon: '📄' },
-				{ id: 'reference', name: '参考资料', icon: '📖' }
-			],
-			fileData: {
-				textbook: [
-					{
-						id: 1,
-						name: '小学数学《单元易错专练》1年级上册.pdf',
-						description: '1年级上册数学课本',
-						size: '12.5MB',
-						downloadUrl: 'https://example.com/math-grade1-textbook.pdf'
-					},
-					{
-						id: 2,
-						name: '小学数学《单元易错专练》2年级上册.pdf',
-						description: '2年级上册数学课本',
-						size: '15.2MB',
-						downloadUrl: 'https://example.com/math-grade2-textbook.pdf'
-					},
-					{
-						id: 3,
-						name: '小学数学《单元易错专练》3年级上册.pdf',
-						description: '3年级上册数学课本',
-						size: '18.7MB',
-						downloadUrl: 'https://example.com/math-grade3-textbook.pdf'
-					}
-				],
-				exercise: [
-					{
-						id: 4,
-						name: '小学数学《单元易错专练》4年级上册.pdf',
-						description: '4年级数学练习册',
-						size: '14.3MB',
-						downloadUrl: 'https://example.com/math-grade4-exercise.pdf'
-					},
-					{
-						id: 5,
-						name: '小学数学《单元易错专练》5年级上册.pdf',
-						description: '5年级数学练习册',
-						size: '16.8MB',
-						downloadUrl: 'https://example.com/math-grade5-exercise.pdf'
-					},
-					{
-						id: 6,
-						name: '小学数学《单元易错专练》6年级上册.pdf',
-						description: '6年级数学练习册',
-						size: '19.2MB',
-						downloadUrl: 'https://example.com/math-grade6-exercise.pdf'
-					}
-				],
-				test: [
-					{
-						id: 7,
-						name: '小学数学期末测试卷1年级.pdf',
-						description: '1年级期末数学测试',
-						size: '8.5MB',
-						downloadUrl: 'https://example.com/math-test-grade1.pdf'
-					},
-					{
-						id: 8,
-						name: '小学数学期末测试卷2年级.pdf',
-						description: '2年级期末数学测试',
-						size: '9.2MB',
-						downloadUrl: 'https://example.com/math-test-grade2.pdf'
-					},
-					{
-						id: 9,
-						name: '小学数学期末测试卷3年级.pdf',
-						description: '3年级期末数学测试',
-						size: '10.1MB',
-						downloadUrl: 'https://example.com/math-test-grade3.pdf'
-					}
-				],
-				reference: [
-					{
-						id: 10,
-						name: '小学数学知识点总结.pdf',
-						description: '数学知识点汇总',
-						size: '22.3MB',
-						downloadUrl: 'https://example.com/math-summary.pdf'
-					},
-					{
-						id: 11,
-						name: '小学数学解题技巧.pdf',
-						description: '数学解题方法和技巧',
-						size: '18.9MB',
-						downloadUrl: 'https://example.com/math-skills.pdf'
-					},
-					{
-						id: 12,
-						name: '小学数学公式大全.pdf',
-						description: '数学公式汇总',
-						size: '13.7MB',
-						downloadUrl: 'https://example.com/math-formulas.pdf'
-					}
-				]
-			}
+				loading: false,
+				categoriesLoading: false,
+				categories: [],
+				currentFiles: [],
+				showMenu: false
 			}
 		},
-		computed: {
-			currentFiles() {
-				return this.fileData[this.selectedCategory] || [];
+
+		mounted() {
+			// 从路由参数中获取地区、年级和科目信息
+			const query = this.$route.query;
+			
+			if (query.grade_id) {
+				this.selectedGradeId = query.grade_id;
 			}
-		},
-		onLoad(options) {
-			// 获取传递的参数
-			if (options.grade) {
-				this.selectedGrade = options.grade;
+			if (query.grade_name) {
+				this.selectedGradeName = query.grade_name;
 			}
-			if (options.subject) {
-				this.subjectName = options.subject;
+			if (query.subject_name) {
+				this.subjectName = query.subject_name;
 			}
-			if (options.subjectId) {
-				this.subjectId = options.subjectId;
+			if (query.subject_id) {
+				this.subjectId = query.subject_id;
 			}
+			// 加载资料分类和资料列表
+			this.loadMaterialTypes();
 		},
 		methods: {
+			async loadMaterialTypes() {
+				this.categoriesLoading = true
+				try {
+					const data = await materialService.getMaterialTypeList(
+						this.selectedGradeId, 
+						this.subjectId
+					)
+					
+					this.categories = data.map(item => ({
+						id: item.id,
+						name: item.name,
+						icon: item.icon || '📄'
+					}))
+					
+					// 默认选择第一个分类
+					if (this.categories.length > 0) {
+						this.selectedCategory = this.categories[0].id
+						this.selectedTypeId = this.categories[0].id
+						await this.loadMaterialList()
+					}
+				} catch (error) {
+					console.error('加载资料分类失败:', error)
+				} finally {
+					this.categoriesLoading = false
+				}
+			},
+			
+			async loadMaterialList() {
+				this.loading = true
+				try {
+					const data = await materialService.getMaterialList(
+						this.selectedGradeId,
+						this.subjectId,
+						this.selectedTypeId
+					)
+					this.currentFiles = data
+				} catch (error) {
+					console.error('加载资料列表失败:', error)
+				} finally {
+					this.loading = false
+				}
+			},
+			
+			async selectCategory(categoryId) {
+				this.selectedCategory = categoryId
+				this.selectedTypeId = categoryId
+				await this.loadMaterialList()
+			},
+			
 			goBack() {
 				this.$router.go(-1);
-			},
-			selectCategory(categoryId) {
-				this.selectedCategory = categoryId;
 			},
 			showDownloadDialog(file) {
 				this.selectedFile = file;
@@ -224,417 +232,689 @@
 			},
 			copyUrl() {
 				// 复制下载链接到剪贴板
-				uni.setClipboardData({
-					data: this.selectedFile.downloadUrl,
-					success: () => {
-						uni.showToast({
-							title: '链接已复制',
-							icon: 'success'
-						});
+				if (navigator.clipboard && window.isSecureContext) {
+					// 使用现代 Clipboard API
+					navigator.clipboard.writeText(this.selectedFile.download_url).then(() => {
+						alert('链接已复制');
 						this.closeModal();
-					},
-					fail: () => {
-						uni.showToast({
-							title: '复制失败',
-							icon: 'none'
-						});
+					}).catch(() => {
+						alert('复制失败');
+					});
+				} else {
+					// 降级方案：使用传统方法
+					try {
+						const textArea = document.createElement('textarea');
+						textArea.value = this.selectedFile.download_url;
+						document.body.appendChild(textArea);
+						textArea.select();
+						document.execCommand('copy');
+						document.body.removeChild(textArea);
+						alert('链接已复制');
+						this.closeModal();
+					} catch (err) {
+						alert('复制失败');
 					}
-				});
+				}
 			}
 		}
 	}
 </script>
 
 <style scoped>
-	.container {
-		min-height: 100vh;
-		background: #f5f5f5;
-		display: flex;
-		flex-direction: column;
-	}
+/* 页面容器 */
+.page-container {
+	min-height: 100vh;
+	background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+	display: flex;
+	flex-direction: column;
+}
 
-	/* 头部导航 */
-	.header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 15px 20px;
-		background: white;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-		position: relative;
-		z-index: 100;
-	}
+/* 头部导航栏 */
+.header-nav {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 20px 24px;
+	background: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(20px);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+	box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+}
 
-	.back-btn, .menu-btn {
-		width: 40px;
-		height: 40px;
-		border-radius: 20px;
-		background: #f0f0f0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		cursor: pointer;
-		transition: all 0.3s ease;
-	}
+.nav-left, .nav-right {
+	width: 60px;
+	display: flex;
+	justify-content: center;
+}
 
-	.back-btn:hover, .menu-btn:hover {
-		background: #e0e0e0;
-		transform: scale(1.1);
-	}
+.nav-center {
+	flex: 1;
+	text-align: center;
+}
 
-	.back-icon, .menu-icon {
-		font-size: 18px;
-		font-weight: bold;
-		color: #333;
-	}
+.back-button, .menu-button {
+	width: 44px;
+	height: 44px;
+	border-radius: 22px;
+	background: rgba(255, 255, 255, 0.9);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 
-	.header-info {
-		text-align: center;
-	}
+.back-button:hover, .menu-button:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
 
-	.header-title {
-		font-size: 18px;
-		font-weight: bold;
-		color: #333;
-		margin-bottom: 2px;
-	}
+.back-icon, .menu-icon {
+	font-size: 20px;
+	color: #333;
+	font-weight: 600;
+}
 
-	.header-subtitle {
-		font-size: 14px;
-		color: #666;
-	}
+.page-title {
+	font-size: 20px;
+	font-weight: 700;
+	color: #2c3e50;
+	margin-bottom: 2px;
+}
 
-	/* 分类选择区域 */
-	.category-section {
-		background: white;
+.page-subtitle {
+	font-size: 14px;
+	color: #7f8c8d;
+	font-weight: 500;
+}
+
+/* 主要内容区域 */
+.main-content {
+	flex: 1;
+	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+/* 分类筛选栏 */
+.filter-section {
+	background: rgba(255, 255, 255, 0.9);
+	border-radius: 20px;
+	padding: 20px;
+	backdrop-filter: blur(20px);
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.filter-title {
+	font-size: 16px;
+	font-weight: 600;
+	color: #2c3e50;
+	margin-bottom: 16px;
+}
+
+.category-scroll {
+	width: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
+.category-scroll::-webkit-scrollbar {
+	display: none;
+}
+
+.category-list {
+	display: flex;
+	gap: 12px;
+	padding: 4px 0;
+	width: max-content;
+	min-width: 100%;
+}
+
+.category-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 12px 16px;
+	background: rgba(255, 255, 255, 0.8);
+	border-radius: 16px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	min-width: 80px;
+	flex-shrink: 0;
+	border: 2px solid transparent;
+	white-space: nowrap;
+}
+
+.category-item:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.category-item.active {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	border-color: rgba(255, 255, 255, 0.3);
+	color: white;
+}
+
+.category-icon-wrapper {
+	width: 40px;
+	height: 40px;
+	border-radius: 20px;
+	background: rgba(255, 255, 255, 0.2);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 6px;
+}
+
+.category-item.active .category-icon-wrapper {
+	background: rgba(255, 255, 255, 0.3);
+}
+
+.category-icon {
+	font-size: 20px;
+}
+
+.category-label {
+	font-size: 12px;
+	font-weight: 500;
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 70px;
+}
+
+.category-item.active .category-label {
+	color: white;
+}
+
+/* 内容展示区域 */
+.content-section {
+	flex: 1;
+	background: rgba(255, 255, 255, 0.9);
+	border-radius: 20px;
+	padding: 24px;
+	backdrop-filter: blur(20px);
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+	min-height: 400px;
+}
+
+/* 空白状态 */
+.empty-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	min-height: 300px;
+	text-align: center;
+}
+
+.empty-illustration {
+	position: relative;
+	margin-bottom: 32px;
+}
+
+.empty-icon {
+	font-size: 80px;
+	opacity: 0.6;
+	display: block;
+}
+
+.empty-decoration {
+	position: absolute;
+	top: -10px;
+	right: -10px;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+	0%, 100% { transform: translateY(0px); }
+	50% { transform: translateY(-10px); }
+}
+
+.empty-content {
+	max-width: 280px;
+}
+
+.empty-title {
+	font-size: 22px;
+	font-weight: 600;
+	color: #2c3e50;
+	margin-bottom: 12px;
+}
+
+.empty-description {
+	font-size: 15px;
+	color: #7f8c8d;
+	line-height: 1.6;
+}
+
+/* 加载状态 */
+.loading-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	min-height: 300px;
+}
+
+.loading-spinner {
+	position: relative;
+	width: 60px;
+	height: 60px;
+	margin-bottom: 24px;
+}
+
+.spinner-ring {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	border: 3px solid transparent;
+	border-top: 3px solid #667eea;
+	border-radius: 50%;
+	animation: spin 1.2s linear infinite;
+}
+
+.spinner-ring:nth-child(2) {
+	width: 80%;
+	height: 80%;
+	top: 10%;
+	left: 10%;
+	border-top-color: #764ba2;
+	animation-delay: -0.4s;
+}
+
+.spinner-ring:nth-child(3) {
+	width: 60%;
+	height: 60%;
+	top: 20%;
+	left: 20%;
+	border-top-color: #667eea;
+	animation-delay: -0.8s;
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+	font-size: 16px;
+	color: #7f8c8d;
+	font-weight: 500;
+}
+
+/* 文件网格列表 */
+.files-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 20px;
+}
+
+.file-card {
+	background: rgba(194, 237, 158, 0.9);
+	border-radius: 16px;
+	padding: 20px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	backdrop-filter: blur(10px);
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.file-card:hover {
+	transform: translateY(-8px);
+	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+	border-color: rgba(102, 126, 234, 0.3);
+}
+
+.file-content {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.file-type-icon {
+	width: 56px;
+	height: 56px;
+	border-radius: 16px;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.file-icon {
+	font-size: 28px;
+	color: white;
+}
+
+.file-info {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.file-title {
+	font-size: 16px;
+	font-weight: 600;
+	color: #2c3e50;
+	line-height: 1.4;
+	margin-bottom: 4px;
+}
+
+.file-meta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 10px;
+}
+
+.file-size, .file-type {
+	font-size: 12px;
+	color: #7f8c8d;
+}
+
+.file-divider {
+	color: #bdc3c7;
+}
+
+.file-description {
+	font-size: 14px;
+	color: #7f8c8d;
+	line-height: 1.5;
+}
+
+.file-action {
+	display: flex;
+	justify-content: center;
+	padding: 0 20px;
+}
+
+.download-button {
+	background: #007AFF;
+	color: white;
+	padding: 8px 20px;
+	border-radius: 15px;
+	font-size: 13px;
+	font-weight: 500;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.3s ease;
+	cursor: pointer;
+}
+
+.download-button:hover {
+	background: #0056CC;
+	transform: translateY(-1px);
+}
+
+/* 下载弹窗 */
+.download-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.6);
+	backdrop-filter: blur(8px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+	animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+.download-dialog {
+	background: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(20px);
+	border-radius: 24px;
+	width: 90%;
+	max-width: 480px;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+	animation: slideUp 0.3s ease;
+	overflow: hidden;
+}
+
+@keyframes slideUp {
+	from { 
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to { 
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.dialog-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 24px;
+	border-bottom: 1px solid rgba(189, 195, 199, 0.2);
+}
+
+.dialog-icon {
+	font-size: 24px;
+	margin-right: 12px;
+}
+
+.dialog-title {
+	font-size: 20px;
+	font-weight: 600;
+	color: #2c3e50;
+	flex: 1;
+}
+
+.dialog-close {
+	width: 36px;
+	height: 36px;
+	border-radius: 18px;
+	background: rgba(127, 140, 141, 0.1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	font-size: 20px;
+	color: #7f8c8d;
+	transition: all 0.3s ease;
+}
+
+.dialog-close:hover {
+	background: rgba(127, 140, 141, 0.2);
+}
+
+.dialog-content {
+	padding: 24px;
+}
+
+.file-preview-large {
+	display: flex;
+	align-items: center;
+	margin-bottom: 24px;
+	padding: 20px;
+	background: rgba(102, 126, 234, 0.05);
+	border-radius: 16px;
+}
+
+.file-icon-large {
+	width: 64px;
+	height: 64px;
+	border-radius: 16px;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 32px;
+	color: white;
+	margin-right: 16px;
+}
+
+.file-info-large {
+	flex: 1;
+}
+
+.file-name-large {
+	font-size: 18px;
+	font-weight: 600;
+	color: #2c3e50;
+	margin-bottom: 4px;
+}
+
+.file-desc-large {
+	font-size: 14px;
+	color: #7f8c8d;
+}
+
+.download-section {
+	background: rgba(247, 248, 249, 0.8);
+	border-radius: 12px;
+	padding: 20px;
+}
+
+.download-label {
+	font-size: 14px;
+	font-weight: 600;
+	color: #2c3e50;
+	margin-bottom: 12px;
+}
+
+.url-display {
+	background: white;
+	border-radius: 8px;
+	padding: 16px;
+	border: 1px solid rgba(189, 195, 199, 0.3);
+}
+
+.url-text {
+	font-size: 13px;
+	color: #34495e;
+	word-break: break-all;
+	line-height: 1.5;
+	font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+}
+
+.dialog-actions {
+	padding: 24px;
+	border-top: 1px solid rgba(189, 195, 199, 0.2);
+}
+
+.action-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px 24px;
+	border-radius: 12px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	font-weight: 600;
+}
+
+.action-button.primary {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.action-button.primary:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+}
+
+.button-icon {
+	margin-right: 8px;
+	font-size: 16px;
+}
+
+.button-text {
+	font-size: 15px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+	.header-nav {
+		padding: 16px 20px;
+	}
+	
+	.main-content {
 		padding: 20px;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+		gap: 20px;
 	}
-
-	.category-tabs {
-		display: flex;
-		gap: 15px;
-		overflow-x: auto;
-	}
-
-	.category-tab {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding: 15px 20px;
-		background: #f8f9fa;
-		border-radius: 12px;
-		cursor: pointer;
-		transition: all 0.3s ease;
-		min-width: 80px;
-		border: 2px solid transparent;
-	}
-
-	.category-tab.active {
-		background: #e3f2fd;
-		border-color: #2196f3;
-	}
-
-	.category-tab:hover {
-		background: #e9ecef;
-		transform: translateY(-2px);
-	}
-
-	.category-tab.active:hover {
-		background: #e3f2fd;
-	}
-
-	.category-icon {
-		font-size: 24px;
-		margin-bottom: 8px;
-	}
-
-	.category-name {
-		font-size: 14px;
-		font-weight: bold;
-		color: #333;
-	}
-
-	/* 文件列表区域 */
-	.file-list-section {
-		flex: 1;
-		background: #f5f5f5;
+	
+	.filter-section, .content-section {
 		padding: 20px;
-		overflow-y: auto;
 	}
-
-	.file-list {
-		max-width: 800px;
-		margin: 0 auto;
+	
+	.files-grid {
+		grid-template-columns: 1fr;
+		gap: 16px;
 	}
-
-	.file-item {
-		display: flex;
-		align-items: center;
-		background: white;
-		border-radius: 12px;
-		padding: 20px;
-		margin-bottom: 15px;
-		cursor: pointer;
-		transition: all 0.3s ease;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	
+	.file-card {
+		padding: 16px;
 	}
-
-	.file-item:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	
+	.empty-icon {
+		font-size: 64px;
 	}
-
-	.file-icon {
-		font-size: 32px;
-		margin-right: 15px;
-		color: #ff6b6b;
-	}
-
-	.file-info {
-		flex: 1;
-	}
-
-	.file-name {
-		font-size: 16px;
-		font-weight: bold;
-		color: #333;
-		margin-bottom: 5px;
-	}
-
-	.file-description {
-		font-size: 14px;
-		color: #666;
-		margin-bottom: 5px;
-	}
-
-	.file-size {
-		font-size: 12px;
-		color: #999;
-	}
-
-	.file-arrow {
+	
+	.empty-title {
 		font-size: 20px;
-		color: #ccc;
-		margin-left: 15px;
 	}
-
-	/* 下载弹窗 */
-	.download-modal {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: rgba(0, 0, 0, 0.5);
-		z-index: 1000;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+	
+	.download-dialog {
+		margin: 20px;
+		max-width: none;
+	}
+	
+	.dialog-header, .dialog-content, .dialog-actions {
 		padding: 20px;
 	}
+}
 
-	.modal-content {
-		background: white;
-		border-radius: 16px;
-		width: 100%;
-		max-width: 500px;
-		max-height: 80vh;
-		overflow: hidden;
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-	}
-
-	.modal-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 20px;
-		border-bottom: 1px solid #e9ecef;
-	}
-
-	.modal-title {
-		font-size: 18px;
-		font-weight: bold;
-		color: #333;
-	}
-
-	.modal-close {
-		width: 32px;
-		height: 32px;
-		border-radius: 16px;
-		background: #f8f9fa;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		cursor: pointer;
-		font-size: 20px;
-		color: #666;
-		transition: all 0.3s ease;
-	}
-
-	.modal-close:hover {
-		background: #e9ecef;
-		color: #333;
-	}
-
-	.modal-body {
-		padding: 20px;
-	}
-
-	.file-info-modal {
-		margin-bottom: 20px;
-	}
-
-	.file-name-modal {
-		font-size: 16px;
-		font-weight: bold;
-		color: #333;
-		margin-bottom: 8px;
-	}
-
-	.file-description-modal {
-		font-size: 14px;
-		color: #666;
-	}
-
-	.url-container {
-		background: #f8f9fa;
-		border-radius: 8px;
-		padding: 15px;
-	}
-
-	.url-label {
-		font-size: 14px;
-		color: #666;
-		margin-bottom: 8px;
-	}
-
-	.url-text {
-		font-size: 13px;
-		color: #333;
-		word-break: break-all;
-		line-height: 1.5;
-		background: white;
-		padding: 10px;
-		border-radius: 6px;
-		border: 1px solid #e9ecef;
-	}
-
-	.modal-footer {
-		padding: 20px;
-		border-top: 1px solid #e9ecef;
-		display: flex;
-		justify-content: center;
-	}
-
-	.copy-btn {
-		display: flex;
-		align-items: center;
+@media (max-width: 480px) {
+	.category-list {
 		gap: 8px;
-		padding: 12px 24px;
-		background: #2196f3;
-		color: white;
-		border-radius: 8px;
-		cursor: pointer;
-		transition: all 0.3s ease;
 	}
-
-	.copy-btn:hover {
-		background: #1976d2;
-		transform: translateY(-1px);
+	
+	.category-item {
+		min-width: 70px;
+		padding: 10px 12px;
 	}
-
-	.copy-icon {
-		font-size: 16px;
+	
+	.category-icon-wrapper {
+		width: 36px;
+		height: 36px;
+		border-radius: 18px;
 	}
-
-	.copy-text {
-		font-size: 14px;
-		font-weight: bold;
+	
+	.category-icon {
+		font-size: 18px;
 	}
-
-	/* 移动端适配 */
-	@media (max-width: 768px) {
-		.header {
-			padding: 12px 15px;
-		}
-
-		.header-title {
-			font-size: 16px;
-		}
-
-		.header-subtitle {
-			font-size: 12px;
-		}
-
-		.pdf-section {
-			margin: 5px;
-		}
-
-		.pdf-toolbar {
-			padding: 12px 15px;
-		}
-
-		.page-info {
-			font-size: 12px;
-		}
-
-		.zoom-controls {
-			gap: 8px;
-		}
-
-		.zoom-btn {
-			width: 28px;
-			height: 28px;
-			font-size: 14px;
-		}
-
-		.zoom-display {
-			font-size: 12px;
-			min-width: 40px;
-		}
-
-		.pdf-placeholder {
-			padding: 30px 15px;
-		}
-
-		.placeholder-icon {
-			font-size: 48px;
-		}
-
-		.placeholder-title {
-			font-size: 20px;
-		}
-
-		.placeholder-subtitle {
-			font-size: 14px;
-		}
-
-		.content-section {
-			padding: 15px;
-		}
-
-		.section-title {
-			font-size: 16px;
-		}
-
-		.section-content {
-			font-size: 13px;
-		}
-
-		.page-navigation {
-			padding: 12px 15px;
-		}
-
-		.nav-btn {
-			padding: 8px 12px;
-			font-size: 12px;
-		}
-
-		.page-input-field {
-			width: 50px;
-			height: 32px;
-			font-size: 12px;
-		}
+	
+	.category-label {
+		font-size: 11px;
+		max-width: 60px;
 	}
+}
 </style>

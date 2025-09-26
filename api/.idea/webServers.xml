@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="56f1ce46-8c7b-4e38-b236-90bbedf0d9f7" name="ziliao">
+        <fileTransfer rootFolder="/www/wwwroot/jxpyq666.com/api" accessType="SFTP" host="175.178.172.89" port="22" sshConfigId="084d5a6d-a57a-48bc-bad8-be59fbd9612b" sshConfig="root@175.178.172.89:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

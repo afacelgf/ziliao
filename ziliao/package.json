@@ -1,7 +1,7 @@
 {
   "name": "junyiacademy-uniapp",
   "version": "1.0.0",
-  "description": "模仿均一教育平台的uniapp项目",
+  "description": "誉享学资料分享平台",
   "main": "main.js",
   "scripts": {
     "dev": "vite",
