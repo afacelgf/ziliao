@@ -17,29 +17,25 @@
 			</div>
 		</div>
 
-		<!-- 主要内容区域 -->
-		<div class="main-content">
-			<!-- 分类筛选栏 -->
-			<div class="filter-section">
-				<div class="filter-title">资料分类</div>
-				<div class="category-scroll">
-					<div class="category-list">
-						<div 
-							class="category-item" 
-							:class="{ active: selectedCategory === category.id }"
-							v-for="category in categories" 
-							:key="category.id"
-							@click="selectCategory(category.id)"
-						>
-							<div class="category-icon-wrapper">
-								<span class="category-icon">{{ category.icon }}</span>
-							</div>
-							<span class="category-label">{{ category.name }}</span>
-						</div>
+		<!-- 分类筛选栏 -->
+		<div class="filter-section"  v-if="categories.length > 0">
+			<div class="category-scroll">
+				<div class="category-list">
+					<div 
+						class="category-item" 
+						:class="{ active: selectedCategory === category.id }"
+						v-for="category in categories" 
+						:key="category.id"
+						@click="selectCategory(category.id)"
+					>
+						<span class="category-label">{{ category.name }}</span>
 					</div>
 				</div>
 			</div>
+		</div>
 
+		<!-- 主要内容区域 -->
+		<div class="main-content">
 			<!-- 内容展示区域 -->
 			<div class="content-section">
 				<!-- 空白状态 -->
@@ -49,7 +45,7 @@
 						<div class="empty-decoration"></div>
 					</div>
 					<div class="empty-content">
-						<div class="empty-description">该分类下暂时没有可用的学习资料<br/>请尝试选择其他分类</div>
+						<div class="empty-description">暂时相关资料<br/>请尝试选择其他学科/分类</div>
 					</div>
 				</div>
 				
@@ -63,28 +59,20 @@
 					<div class="loading-text">正在加载资料...</div>
 				</div>
 				
-				<!-- 文件网格列表 -->
-				<div v-if="currentFiles.length > 0" class="files-grid">
+				<!-- 文件列表 -->
+				<div v-if="currentFiles.length > 0" class="files-list">
 					<div 
-						class="file-card" 
+						class="file-item" 
 						v-for="file in currentFiles" 
 						:key="file.id"
 						@click="showDownloadDialog(file)"
 					>
 						<div class="file-content">
-							<div class="file-type-icon">
-								<span class="file-icon">📄</span>
-							</div>
-							<div class="file-info">
-								<div class="file-title">{{ file.name }}</div>
-								<div class="file-meta">
-									<span class="file-size">{{ file.filesize }}</span>
-								</div>
-								<div class="file-description">{{ file.description }}</div>
-							</div>
+							<div class="file-title">{{ file.name }}</div>
+							<div class="file-description">{{ file.description }}</div>
 						</div>
 						<div class="file-action">
-							<div class="download-button">点击下载</div>
+							<div class="download-button">下载</div>
 						</div>
 					</div>
 				</div>
@@ -183,7 +171,6 @@
 						name: item.name,
 						icon: item.icon || '📄'
 					}))
-					
 					// 默认选择第一个分类
 					if (this.categories.length > 0) {
 						this.selectedCategory = this.categories[0].id
@@ -332,26 +319,17 @@
 /* 主要内容区域 */
 .main-content {
 	flex: 1;
-	padding: 24px;
+	padding: 0 24px 24px 24px;
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
 }
 
 /* 分类筛选栏 */
 .filter-section {
-	background: rgba(255, 255, 255, 0.9);
-	border-radius: 20px;
-	padding: 20px;
+	background: rgba(255, 255, 255, 0.95);
 	backdrop-filter: blur(20px);
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-.filter-title {
-	font-size: 16px;
-	font-weight: 600;
-	color: #2c3e50;
-	margin-bottom: 16px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+	padding: 16px 10px;
 }
 
 .category-scroll {
@@ -366,69 +344,36 @@
 
 .category-list {
 	display: flex;
-	gap: 12px;
+	gap: 8px;
 	padding: 4px 0;
 	width: max-content;
 	min-width: 100%;
 }
 
 .category-item {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	padding: 12px 16px;
+	padding: 4px 16px;
 	background: rgba(255, 255, 255, 0.8);
-	border-radius: 16px;
+	border-radius: 20px;
 	cursor: pointer;
 	transition: all 0.3s ease;
-	min-width: 80px;
 	flex-shrink: 0;
 	border: 2px solid transparent;
 	white-space: nowrap;
 }
 
 .category-item:hover {
-	transform: translateY(-4px);
-	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+	background: rgba(255, 255, 255, 0.9);
 }
 
 .category-item.active {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	border-color: rgba(255, 255, 255, 0.3);
+	background: #007AFF;
 	color: white;
-}
-
-.category-icon-wrapper {
-	width: 40px;
-	height: 40px;
-	border-radius: 20px;
-	background: rgba(255, 255, 255, 0.2);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin-bottom: 6px;
-}
-
-.category-item.active .category-icon-wrapper {
-	background: rgba(255, 255, 255, 0.3);
-}
-
-.category-icon {
-	font-size: 20px;
 }
 
 .category-label {
-	font-size: 12px;
+	font-size: 14px;
 	font-weight: 500;
 	text-align: center;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	max-width: 70px;
-}
-
-.category-item.active .category-label {
-	color: white;
 }
 
 /* 内容展示区域 */
@@ -440,6 +385,78 @@
 	backdrop-filter: blur(20px);
 	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 	min-height: 400px;
+	margin-top: 24px;
+}
+
+/* 文件列表 */
+.files-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.file-item {
+	background: rgba(255, 255, 255, 0.9);
+	border-radius: 12px;
+	padding: 16px 20px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	backdrop-filter: blur(10px);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.file-item:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+	border-color: rgba(0, 122, 255, 0.3);
+}
+
+.file-content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.file-title {
+	font-size: 16px;
+	font-weight: 600;
+	color: #2c3e50;
+	line-height: 1.4;
+}
+
+.file-description {
+	font-size: 14px;
+	color: #7f8c8d;
+	line-height: 1.5;
+}
+
+.file-action {
+	flex-shrink: 0;
+	margin-left: 16px;
+}
+
+.download-button {
+	background: #007AFF;
+	color: white;
+	padding: 8px 16px;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 500;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.3s ease;
+	cursor: pointer;
+	min-width: 60px;
+}
+
+.download-button:hover {
+	background: #0056CC;
+	transform: translateY(-1px);
 }
 
 /* 空白状态 */
@@ -551,116 +568,6 @@
 	font-size: 16px;
 	color: #7f8c8d;
 	font-weight: 500;
-}
-
-/* 文件网格列表 */
-.files-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-	gap: 20px;
-}
-
-.file-card {
-	background: rgba(194, 237, 158, 0.9);
-	border-radius: 16px;
-	padding: 20px;
-	cursor: pointer;
-	transition: all 0.3s ease;
-	border: 1px solid rgba(255, 255, 255, 0.2);
-	backdrop-filter: blur(10px);
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-}
-
-.file-card:hover {
-	transform: translateY(-8px);
-	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-	border-color: rgba(102, 126, 234, 0.3);
-}
-
-.file-content {
-	display: flex;
-	align-items: flex-start;
-	gap: 10px;
-}
-
-.file-type-icon {
-	width: 56px;
-	height: 56px;
-	border-radius: 16px;
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-}
-
-.file-icon {
-	font-size: 28px;
-	color: white;
-}
-
-.file-info {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-}
-
-.file-title {
-	font-size: 16px;
-	font-weight: 600;
-	color: #2c3e50;
-	line-height: 1.4;
-	margin-bottom: 4px;
-}
-
-.file-meta {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	margin-bottom: 10px;
-}
-
-.file-size, .file-type {
-	font-size: 12px;
-	color: #7f8c8d;
-}
-
-.file-divider {
-	color: #bdc3c7;
-}
-
-.file-description {
-	font-size: 14px;
-	color: #7f8c8d;
-	line-height: 1.5;
-}
-
-.file-action {
-	display: flex;
-	justify-content: center;
-	padding: 0 20px;
-}
-
-.download-button {
-	background: #007AFF;
-	color: white;
-	padding: 8px 20px;
-	border-radius: 15px;
-	font-size: 13px;
-	font-weight: 500;
-	height: 30px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	transition: all 0.3s ease;
-	cursor: pointer;
-}
-
-.download-button:hover {
-	background: #0056CC;
-	transform: translateY(-1px);
 }
 
 /* 下载弹窗 */
@@ -862,7 +769,7 @@
 	}
 	
 	.filter-section, .content-section {
-		padding: 20px;
+		padding: 10px;
 	}
 	
 	.files-grid {

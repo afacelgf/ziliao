@@ -38,14 +38,21 @@ class Material
             return Utitls::sendJson(400, "参数错误");
         }
 
-        // 查询
-        $res = \app\ziliao\model\MaterialCategory::field(['id', 'name', 'description'])
-            ->whereRaw("FIND_IN_SET(:subject_id, subject_ids)", ['subject_id' => $params["subject_id"]])
-            ->whereRaw("FIND_IN_SET(:grade_id, grade_ids)", ['grade_id' => $params["grade_id"]])
-            ->where('is_visible', 1)
-            ->order('sort_order desc')
+        // 联表查询，只返回有Material内容的类型，并按Material数量排序
+        $res = \app\ziliao\model\MaterialCategory::alias('mc')
+            ->field(['mc.id', 'mc.name', 'mc.description', 'COUNT(m.id) as material_count'])
+            ->join('material m', 'mc.id = m.type_id', 'INNER')
+            ->whereRaw("FIND_IN_SET(:subject_id, mc.subject_ids)", ['subject_id' => $params["subject_id"]])
+            ->whereRaw("FIND_IN_SET(:grade_id, mc.grade_ids)", ['grade_id' => $params["grade_id"]])
+            ->where('mc.is_visible', 1)
+            ->where('m.grade_id', $params["grade_id"])
+            ->where('m.subject_id', $params["subject_id"])
+            ->where('m.is_visible', 1)
+            ->group('mc.id')
+            ->order('material_count desc')
             ->select()
             ->toArray();
+
 
         // 返回
         if (!empty($res)) {

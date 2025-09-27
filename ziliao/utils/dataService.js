@@ -26,14 +26,7 @@ export const gradeService = {
     } catch (error) {
       console.warn('获取年级列表失败，使用默认数据:', error.message)
       // 返回默认年级数据
-      return [
-        { id: 1, grade_name: "一年级", grade_level: 1, description: "小学一年级" },
-        { id: 2, grade_name: "二年级", grade_level: 2, description: "小学二年级" },
-        { id: 3, grade_name: "三年级", grade_level: 3, description: "小学三年级" },
-        { id: 4, grade_name: "四年级", grade_level: 4, description: "小学四年级" },
-        { id: 5, grade_name: "五年级", grade_level: 5, description: "小学五年级" },
-        { id: 6, grade_name: "六年级", grade_level: 6, description: "小学六年级" }
-      ]
+      return []
     }
   }
 }
@@ -61,12 +54,7 @@ export const subjectService = {
     } catch (error) {
       console.warn('获取科目列表失败，使用默认数据:', error.message)
       // 返回默认科目数据
-      return [
-        { id: 1, name: "语文", icon: "📚" },
-        { id: 2, name: "数学", icon: "🔢" },
-        { id: 3, name: "英语", icon: "🔤" },
-        { id: 4, name: "科学", icon: "🔬" }
-      ]
+      return []
     }
   }
 }
@@ -95,12 +83,7 @@ export const materialService = {
     } catch (error) {
       console.warn('获取资料类型列表失败，使用默认数据:', error.message)
       // 返回默认资料类型数据
-      return [
-        { id: 1, name: '期中期末试卷', icon: '📚' },
-        { id: 2, name: '单元测验卷', icon: '📝' },
-        { id: 3, name: '练习题', icon: '📄' },
-        { id: 4, name: '参考资料', icon: '📖' }
-      ]
+      return []
     }
   },
 
@@ -125,15 +108,7 @@ export const materialService = {
     } catch (error) {
       console.warn('获取资料列表失败，使用默认数据:', error.message)
       // 返回默认资料数据
-      return [
-        {
-          id: 1,
-          name: '小学数学《单元易错专练》1年级上册.pdf',
-          description: '1年级上册数学课本',
-          size: '12.5MB',
-          downloadUrl: 'https://example.com/math-grade1-textbook.pdf'
-        }
-      ]
+      return []
     }
   },
 
