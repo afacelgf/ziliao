@@ -41,6 +41,8 @@ Route::group('/api/', function () {
     Route::get('ziliao/getSubjectList', 'ziliao/Subject/getSubjectList');//科目列表
     Route::get('ziliao/getTypeList', 'ziliao/Material/getTypeList');//类别列表
     Route::get('ziliao/getMaterialList', 'ziliao/Material/list');//资料列表
+    Route::get('ziliao/search', 'ziliao/Material/search');//搜索资料-根据关键词搜索资料名称
+    Route::post('ziliao/requestMaterial', 'ziliao/Userrequest/add');//用户提交资料申请
 
 
     Route::get('music/gedanList', 'api/Music/gedanList');//歌单列表

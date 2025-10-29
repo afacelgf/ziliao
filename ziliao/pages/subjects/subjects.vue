@@ -2,12 +2,24 @@
 	<div class="container">
 		<!-- 头部导航 -->
 		<div class="header">
-			<div class="back-btn" @click="goBack">
-				<span class="back-icon">←</span>
-			</div>
-			<div class="header-title">选择科目</div>
+			<div class="header-title">分类</div>
 			<div class="header-info">
-				<div class="grade-info">{{ selectedGradeName }}</div>
+				<div class="grade-selector" @click="toggleGradeDropdown">
+					<div class="grade-info">
+						{{ selectedGradeName || '请选择年级' }}
+						<span class="dropdown-arrow" :class="{ 'open': showGradeDropdown }">▼</span>
+					</div>
+					<!-- 年级下拉列表 -->
+					<div class="grade-dropdown" v-if="showGradeDropdown" @click.stop>
+						<div class="grade-option" 
+							v-for="grade in gradeList" 
+							:key="grade.id"
+							:class="{ 'active': grade.id === selectedGradeId }"
+							@click="selectGrade(grade)">
+							{{ grade.grade_name }}
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -37,7 +49,7 @@
 </template>
 
 <script>
-import { subjectService } from '@/utils/dataService.js'
+import { subjectService, gradeService } from '@/utils/dataService.js'
 
 export default {
 	data() {
@@ -47,6 +59,8 @@ export default {
 			selectedSubjectId: null,
 			selectedSubjectName: null,
 			subjects: [],
+			gradeList: [],
+			showGradeDropdown: false,
 			loading: false
 		}
 	},
@@ -62,9 +76,20 @@ export default {
 		if (grade_name) {
 			this.selectedGradeName = grade_name;
 		}
+		this.loadGradeList()
 		this.loadSubjects()
 	},
 	methods: {
+		async loadGradeList() {
+			try {
+				const data = await gradeService.getGradeList()
+				console.log('加载年级列表成功:', data)
+				this.gradeList = data
+			} catch (error) {
+				console.error('加载年级列表失败:', error)
+			}
+		},
+		
 		async loadSubjects() {
 			this.loading = true
 			try {
@@ -78,9 +103,22 @@ export default {
 				this.loading = false
 			}
 		},
-		goBack() {
-			this.$router.go(-1);
+		
+		toggleGradeDropdown() {
+			this.showGradeDropdown = !this.showGradeDropdown
 		},
+		
+		selectGrade(grade) {
+			this.selectedGradeId = grade.id
+			this.selectedGradeName = grade.grade_name
+			this.showGradeDropdown = false
+			// 清空当前选中的科目
+			this.selectedSubjectId = null
+			this.selectedSubjectName = null
+			// 重新加载科目列表
+			this.loadSubjects()
+		},
+		
 		selectSubject(subject) {
 			this.selectedSubjectId = subject.id;
 			this.selectedSubjectName = subject.name;
@@ -179,6 +217,59 @@ export default {
 	padding: 8px 16px;
 	border-radius: 20px;
 	backdrop-filter: blur(10px);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.grade-selector {
+	position: relative;
+	cursor: pointer;
+}
+
+.dropdown-arrow {
+	font-size: 12px;
+	transition: transform 0.3s ease;
+}
+
+.dropdown-arrow.open {
+	transform: rotate(180deg);
+}
+
+.grade-dropdown {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	margin-top: 8px;
+	background: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(20px);
+	border-radius: 12px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+	min-width: 120px;
+	z-index: 1000;
+	overflow: hidden;
+}
+
+.grade-option {
+	padding: 12px 16px;
+	color: #333;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.grade-option:last-child {
+	border-bottom: none;
+}
+
+.grade-option:hover {
+	background: rgba(102, 126, 234, 0.1);
+}
+
+.grade-option.active {
+	background: rgba(102, 126, 234, 0.2);
+	color: #667eea;
+	font-weight: 600;
 }
 
 /* 科目选择区域 */

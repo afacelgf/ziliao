@@ -2,9 +2,15 @@
 	<div class="container">
 		<!-- 头部标题区域 -->
 		<div class="header-section">
-			<div class="header-title">欢迎来到誉享学资料分享平台</div>
+			<div class="header-title">永远相信每次努力都很值得！</div>
 		</div>
-
+		<!-- 搜索按钮 -->
+			<div class="search-section">
+				<button class="search-btn" @click="goToSearch">
+					<span class="search-icon">🔍</span>
+					搜索资料
+				</button>
+			</div>
 		<!-- 九宫格年级选择区域 -->
 		<div class="grade-section">
 			<div class="grade-grid">
@@ -21,9 +27,9 @@
 			</div>
 		</div>
 
-		<!-- 底部欢迎区域 -->
+		<!-- 底部区域 -->
 		<div class="welcome-section">
-			<div class="header-subtitle">请选择您的对应年级</div>
+			<div class="header-subtitle">请选择您的对应年级后进入资料库</div>
 			<button 
 				class="enter-btn" 
 				:disabled="!selectedGradeId"
@@ -31,6 +37,8 @@
 			>
 				进入资料库
 			</button>
+			
+			
 		</div>
 	</div>
 </template>
@@ -115,6 +123,11 @@
 						}
 					});
 				}
+			},
+			
+			goToSearch() {
+				// 跳转到搜索页面
+				this.$router.push('/search');
 			}
 		}
 	}
@@ -177,10 +190,10 @@
 	/* 头部标题区域 */
 	.header-section {
 		text-align: center;
-		color: white;
+		color: rgb(188, 55, 55);
 		padding: 40px 0;
 	}
-
+·
 	.header-title {
 		font-size: 32px;
 		font-weight: bold;
@@ -251,7 +264,7 @@
 	.welcome-section {
 		text-align: center;
 		color: white;
-		padding: 40px 0;
+		padding: 20px 0;
 	}
 
 	.welcome-text {
@@ -290,6 +303,37 @@
 		cursor: not-allowed;
 		transform: none;
 		box-shadow: none;
+	}
+
+	/* 搜索按钮区域 */
+	.search-section {
+		margin-top: 20px;
+	}
+
+	.search-btn {
+		background: rgba(255, 255, 255, 0.2);
+		color: white;
+		border: 2px solid rgba(255, 255, 255, 0.3);
+		border-radius: 25px;
+		padding: 12px 30px;
+		font-size: 16px;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0 auto;
+	}
+
+	.search-btn:hover {
+		background: rgba(255, 255, 255, 0.3);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	}
+
+	.search-icon {
+		font-size: 18px;
 	}
 
 	/* 移动端适配 */

@@ -9,13 +9,31 @@
 		{
 			"path": "pages/subjects/subjects",
 			"style": {
-				"navigationBarTitleText": "选择科目"
+				"navigationBarTitleText": "分类"
+			}
+		},
+		{
+			"path": "pages/profile/profile",
+			"style": {
+				"navigationBarTitleText": "我的"
 			}
 		},
 		{
 			"path": "pages/pdf/pdf",
 			"style": {
 				"navigationBarTitleText": "PDF预览"
+			}
+		},
+		{
+			"path": "pages/search/search",
+			"style": {
+				"navigationBarTitleText": "搜索"
+			}
+		},
+		{
+			"path": "pages/request/request",
+			"style": {
+				"navigationBarTitleText": "申请资料"
 			}
 		}
 	],
@@ -28,15 +46,21 @@
 	"uniIdRouter": {},
 	"tabBar": {
 		"color": "#7A7E83",
-		"selectedColor": "#3cc51f",
+		"selectedColor": "#007aff",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [
 			{
-				"pagePath": "pages/index/index",
-				"iconPath": "static/home.png",
-				"selectedIconPath": "static/home-active.png",
+				"pagePath": "pages/index/Home",
 				"text": "首页"
+			},
+			{
+				"pagePath": "pages/subjects/subjects",
+				"text": "分类"
+			},
+			{
+				"pagePath": "pages/profile/profile",
+				"text": "我的"
 			}
 		]
 	}

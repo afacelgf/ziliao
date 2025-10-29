@@ -11,7 +11,7 @@ namespace app\ziliao\model;
 
 use think\Model;
 
-class Material extends Model
+class Userrequest extends Model
 {
 
 }

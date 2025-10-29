@@ -6,20 +6,43 @@ use app\Utitls;
 use think\facade\Request;
 use function app\api\controller\db;
 
-class Subject
+class Userrequest
 {
-    //根据年级获取对应的科目列表
-    public function getSubjectList()
+    //根据用户提交的数据添加到表
+    public function add()
     {
         $params = Request::param();
-        $res = \app\ziliao\model\Subject::field(['id','name','description'])
-            ->whereRaw("FIND_IN_SET(:grade_id, grade_ids) AND is_visible = 1", ['grade_id' => $params["grade_id"]])
-            ->order('id asc')
-            ->select();
-        if ($res) {
-            Utitls::sendJson(200,$res);
+        
+        // 参数验证
+        if (empty($params["material_name"])) {
+            return Utitls::sendJson(400, "资料名称不能为空");
         }
-        Utitls::sendJson(500);
+        if (empty($params["grade"])) {
+            return Utitls::sendJson(400, "年级不能为空");
+        }
+        if (empty($params["subject"])) {
+            return Utitls::sendJson(400, "科目不能为空");
+        }
+        // 准备插入数据
+        $data = [
+            'name' => $params["material_name"],
+            'grade' => $params["grade"],
+            'subject' => $params["subject"],
+            'create_time' => date('Y-m-d H:i:s', time()), // 添加创建时间
+            'status' => 0 // 默认状态为1
+        ];
+
+        // 插入数据
+        try {
+            $result = \app\ziliao\model\Userrequest::create($data);
+            if ($result) {
+                return Utitls::sendJson(200, "用户请求添加成功");
+            } else {
+                return Utitls::sendJson(500, "添加失败");
+            }
+        } catch (\Exception $e) {
+            return Utitls::sendJson(500, "添加失败：" . $e->getMessage());
+        }
     }
 
 }

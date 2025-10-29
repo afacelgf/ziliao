@@ -72,7 +72,7 @@
 							<div class="file-description">{{ file.description }}</div>
 						</div>
 						<div class="file-action">
-							<div class="download-button">下载</div>
+							<div class="download-button">详情</div>
 						</div>
 					</div>
 				</div>
@@ -84,7 +84,7 @@
 			<div class="download-dialog" @click.stop>
 				<div class="dialog-header">
 					<div class="dialog-icon">📥</div>
-					<div class="dialog-title">下载资料</div>
+					<div class="dialog-title">资料详情</div>
 					<div class="dialog-close" @click="closeModal">×</div>
 				</div>
 				
@@ -97,21 +97,31 @@
 						</div>
 					</div>
 					
-					<div class="download-section">
+					<!-- <div class="download-section">
 						<div class="download-label">下载链接</div>
 						<div class="url-display">
 							<span class="url-text" :selectable="true">{{ selectedFile.download_url }}</span>
 						</div>
-					</div>
+					</div> -->
 				</div>
 				
 				<div class="dialog-actions">
+					<div class="action-button secondary" @click="downloadFile">
+						<span class="button-icon">📃</span>
+						<span class="button-text">查看文件</span>
+					</div>
 					<div class="action-button primary" @click="copyUrl">
 						<span class="button-icon">📋</span>
-						<span class="button-text">复制链接</span>
+						<span class="button-text">复制下载链接</span>
 					</div>
 				</div>
 			</div>
+		</div>
+
+		<!-- 吐司提示 -->
+		<div class="toast" v-if="toastVisible" :class="toastType">
+			<div class="toast-icon">{{ toastIcon }}</div>
+			<div class="toast-message">{{ toastMessage }}</div>
 		</div>
 	</div>
 </template>
@@ -134,7 +144,11 @@
 				categoriesLoading: false,
 				categories: [],
 				currentFiles: [],
-				showMenu: false
+				showMenu: false,
+				toastVisible: false,
+				toastMessage: '',
+				toastType: 'success',
+				toastIcon: '✓'
 			}
 		},
 
@@ -222,10 +236,10 @@
 				if (navigator.clipboard && window.isSecureContext) {
 					// 使用现代 Clipboard API
 					navigator.clipboard.writeText(this.selectedFile.download_url).then(() => {
-						alert('链接已复制');
+						this.showToast('链接已复制', 'success');
 						this.closeModal();
 					}).catch(() => {
-						alert('复制失败');
+						this.showToast('复制失败', 'error');
 					});
 				} else {
 					// 降级方案：使用传统方法
@@ -236,12 +250,44 @@
 						textArea.select();
 						document.execCommand('copy');
 						document.body.removeChild(textArea);
-						alert('链接已复制');
+						this.showToast('链接已复制', 'success');
 						this.closeModal();
 					} catch (err) {
-						alert('复制失败');
+						this.showToast('复制失败', 'error');
 					}
 				}
+			},
+			
+			downloadFile() {
+				// 根据URL下载文件到本地
+				try {
+					const link = document.createElement('a');
+					console.log(this.selectedFile.download_url);
+					link.href = this.selectedFile.download_url;
+					link.download = this.selectedFile.name || 'download';
+					link.target = '_blank'; 
+					document.body.appendChild(link);
+					link.click();
+					document.body.removeChild(link);
+					// this.showToast('开始下载', 'success');
+					this.closeModal();
+				} catch (error) {
+					console.error('下载失败:', error);
+					this.showToast('下载失败，请尝试复制链接手动下载', 'error');
+				}
+			},
+			
+			// 显示吐司提示
+			showToast(message, type = 'success') {
+				this.toastMessage = message
+				this.toastType = type
+				this.toastIcon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'
+				this.toastVisible = true
+				
+				// 3秒后自动隐藏
+				setTimeout(() => {
+					this.toastVisible = false
+				}, 3000)
 			}
 		}
 	}
@@ -319,7 +365,7 @@
 /* 主要内容区域 */
 .main-content {
 	flex: 1;
-	padding: 0 24px 24px 24px;
+	padding: 0 16px 24px 16px;
 	display: flex;
 	flex-direction: column;
 }
@@ -345,13 +391,13 @@
 .category-list {
 	display: flex;
 	gap: 8px;
-	padding: 4px 0;
+	/* padding: 4px 0; */
 	width: max-content;
 	min-width: 100%;
 }
 
 .category-item {
-	padding: 4px 16px;
+	padding: 4px 10px;
 	background: rgba(255, 255, 255, 0.8);
 	border-radius: 20px;
 	cursor: pointer;
@@ -381,11 +427,11 @@
 	flex: 1;
 	background: rgba(255, 255, 255, 0.9);
 	border-radius: 20px;
-	padding: 24px;
+	padding: 16px;
 	backdrop-filter: blur(20px);
 	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 	min-height: 400px;
-	margin-top: 24px;
+	/* margin-top: 24px; */
 }
 
 /* 文件列表 */
@@ -396,9 +442,9 @@
 }
 
 .file-item {
-	background: rgba(255, 255, 255, 0.9);
+	background: rgba(231, 227, 227, 0.9);
 	border-radius: 12px;
-	padding: 16px 20px;
+	padding: 12px 10px;
 	cursor: pointer;
 	transition: all 0.3s ease;
 	border: 1px solid rgba(255, 255, 255, 0.2);
@@ -622,13 +668,13 @@
 }
 
 .dialog-icon {
-	font-size: 24px;
+	font-size: 20px;
 	margin-right: 12px;
 }
 
 .dialog-title {
-	font-size: 20px;
-	font-weight: 600;
+	font-size: 16px;
+	font-weight: 400;
 	color: #2c3e50;
 	flex: 1;
 }
@@ -659,20 +705,20 @@
 	display: flex;
 	align-items: center;
 	margin-bottom: 24px;
-	padding: 20px;
+	padding: 10px;
 	background: rgba(102, 126, 234, 0.05);
 	border-radius: 16px;
 }
 
 .file-icon-large {
-	width: 64px;
-	height: 64px;
+	width: 30px;
+	height: 30px;
 	border-radius: 16px;
 	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 32px;
+	font-size: 25px;
 	color: white;
 	margin-right: 16px;
 }
@@ -682,7 +728,7 @@
 }
 
 .file-name-large {
-	font-size: 18px;
+	font-size: 16px;
 	font-weight: 600;
 	color: #2c3e50;
 	margin-bottom: 4px;
@@ -696,7 +742,7 @@
 .download-section {
 	background: rgba(247, 248, 249, 0.8);
 	border-radius: 12px;
-	padding: 20px;
+	padding: 16px;
 }
 
 .download-label {
@@ -724,28 +770,43 @@
 .dialog-actions {
 	padding: 24px;
 	border-top: 1px solid rgba(189, 195, 199, 0.2);
+	display: flex;
+	gap: 12px;
 }
 
 .action-button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 16px 24px;
+	padding: 16px 12px;
 	border-radius: 12px;
 	cursor: pointer;
 	transition: all 0.3s ease;
-	font-weight: 600;
+	font-weight: 400;
+	flex: 1;
+}
+
+.action-button.secondary {
+	background: rgba(127, 140, 141, 0.1);
+	color: #7f8c8d;
+	border: 1px solid rgba(127, 140, 141, 0.2);
+}
+
+.action-button.secondary:hover {
+	background: rgba(127, 140, 141, 0.2);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 15px rgba(127, 140, 141, 0.3);
 }
 
 .action-button.primary {
 	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 	color: white;
-	box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+	box-shadow: 0 4px 15px rgba(57, 89, 231, 0.4);
 }
 
 .action-button.primary:hover {
 	transform: translateY(-2px);
-	box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+	box-shadow: 0 8px 25px rgba(46, 80, 233, 0.6);
 }
 
 .button-icon {
@@ -754,7 +815,72 @@
 }
 
 .button-text {
-	font-size: 15px;
+	font-size: 13px;
+}
+
+/* 吐司提示样式 */
+.toast {
+	position: fixed;
+	top: 80px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(20px);
+	border-radius: 12px;
+	padding: 16px 24px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+	z-index: 2000;
+	animation: toastSlideIn 0.3s ease;
+	border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@keyframes toastSlideIn {
+	from {
+		opacity: 0;
+		transform: translateX(-50%) translateY(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}
+}
+
+.toast.success {
+	border-left: 4px solid #27ae60;
+}
+
+.toast.error {
+	border-left: 4px solid #e74c3c;
+}
+
+.toast.info {
+	border-left: 4px solid #3498db;
+}
+
+.toast-icon {
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.toast.success .toast-icon {
+	color: #27ae60;
+}
+
+.toast.error .toast-icon {
+	color: #e74c3c;
+}
+
+.toast.info .toast-icon {
+	color: #3498db;
+}
+
+.toast-message {
+	font-size: 14px;
+	color: #2c3e50;
+	font-weight: 500;
 }
 
 /* 响应式设计 */
@@ -806,7 +932,7 @@
 	
 	.category-item {
 		min-width: 70px;
-		padding: 10px 12px;
+		/* padding: 10px 12px; */
 	}
 	
 	.category-icon-wrapper {
