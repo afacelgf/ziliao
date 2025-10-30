@@ -1,0 +1,74 @@
+<svg width="1200" height="400" viewBox="0 0 1200 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#5DADE2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#85C1E9;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cloudGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F8C8DC;stop-opacity:0.9" />
+      <stop offset="50%" style="stop-color:#FFB6C1;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#FFA0B4;stop-opacity:0.7" />
+    </linearGradient>
+    <linearGradient id="mountainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#6C7B95;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4A5568;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="fieldGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#98D8C8;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#A8E6CF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#88D8A3;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Sky background -->
+  <rect width="1200" height="400" fill="url(#skyGradient)"/>
+  
+  <!-- Distant mountains -->
+  <path d="M0 280 Q200 240 400 260 T800 250 Q1000 240 1200 260 V400 H0 Z" fill="url(#mountainGradient)" opacity="0.6"/>
+  
+  <!-- Middle mountains -->
+  <path d="M0 300 Q300 260 600 280 T1200 270 V400 H0 Z" fill="url(#mountainGradient)" opacity="0.8"/>
+  
+  <!-- Fields -->
+  <path d="M0 320 Q400 300 800 310 T1200 305 V400 H0 Z" fill="url(#fieldGradient)"/>
+  
+  <!-- Clouds -->
+  <g fill="url(#cloudGradient)">
+    <!-- Large cloud left -->
+    <ellipse cx="200" cy="120" rx="80" ry="40" opacity="0.8"/>
+    <ellipse cx="160" cy="130" rx="60" ry="35" opacity="0.7"/>
+    <ellipse cx="240" cy="135" rx="70" ry="38" opacity="0.75"/>
+    <ellipse cx="200" cy="150" rx="85" ry="30" opacity="0.6"/>
+    
+    <!-- Medium cloud center -->
+    <ellipse cx="500" cy="100" rx="60" ry="30" opacity="0.7"/>
+    <ellipse cx="470" cy="110" rx="45" ry="25" opacity="0.6"/>
+    <ellipse cx="530" cy="115" rx="50" ry="28" opacity="0.65"/>
+    
+    <!-- Large cloud right -->
+    <ellipse cx="900" cy="80" rx="90" ry="45" opacity="0.8"/>
+    <ellipse cx="850" cy="95" rx="70" ry="35" opacity="0.7"/>
+    <ellipse cx="950" cy="100" rx="75" ry="40" opacity="0.75"/>
+    <ellipse cx="900" cy="120" rx="95" ry="35" opacity="0.6"/>
+    
+    <!-- Small clouds -->
+    <ellipse cx="700" cy="60" rx="40" ry="20" opacity="0.6"/>
+    <ellipse cx="1050" cy="140" rx="35" ry="18" opacity="0.5"/>
+    <ellipse cx="350" cy="70" rx="30" ry="15" opacity="0.5"/>
+  </g>
+  
+  <!-- Foreground elements -->
+  <g opacity="0.4">
+    <!-- Trees silhouettes -->
+    <ellipse cx="100" cy="340" rx="15" ry="25" fill="#2D3748"/>
+    <ellipse cx="300" cy="335" rx="12" ry="20" fill="#2D3748"/>
+    <ellipse cx="800" cy="345" rx="18" ry="30" fill="#2D3748"/>
+    <ellipse cx="1100" cy="340" rx="14" ry="22" fill="#2D3748"/>
+  </g>
+  
+  <!-- Subtle light rays -->
+  <g opacity="0.3">
+    <path d="M1000 0 L1020 200 L980 200 Z" fill="#FFE4B5"/>
+    <path d="M1050 0 L1070 180 L1030 180 Z" fill="#FFE4B5"/>
+  </g>
+</svg>

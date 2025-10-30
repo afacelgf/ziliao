@@ -5,17 +5,8 @@ import { resolve } from 'path'
 export default defineConfig({
   plugins: [vue()],
   root: '.',
-  base: './', // 设置为相对路径，适合部署到任意路径
   build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['vue', 'vue-router']
-        }
-      }
-    }
+    outDir: 'dist'
   },
   server: {
     port: 3000,
